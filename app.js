@@ -1,5 +1,5 @@
 const express = require('express');
-const port = 3001;
+const port = 4000;
 const cors = require('cors');
 
 const jwtToken = require('jsonwebtoken');
@@ -10,7 +10,7 @@ const app = express();
 const data = [
     { id: 1, userName: 'lizander', user: 'admin' },
     { id: 21, userName: 'jorge gonz', user: 'jg' },
-    { id: 13, userName: 'dani', user: 'superuser' },
+    { id: 18, userName: 'dani', user: 'superuser' },
     { id: 13, userName: 'chivi', user: 'superuser' },
 ]
 
@@ -37,8 +37,14 @@ const verifyToken = (req, res, next) => {
     }
 }
 
+app.get('/data/hacked', (req, resp) => {
+    resp.status(200).send(data)
+})
 
 app.get('/data/:id', verifyToken, (req, resp) => {
+
+    console.log('se hizo un get')
+    console.log('-----------------')
     console.log(req.params.userLogged)
     const currentUserLogged = req.params.userLogged;
     resp.status(200).json({ currentUserLogged, data });
@@ -46,9 +52,12 @@ app.get('/data/:id', verifyToken, (req, resp) => {
 
 
 app.post('/login/', (req, resp) => {
+
     const user = req.body.userLogin;
     const password = req.body.passLogin;
-
+    console.log('------------------')
+    console.log(req.body)
+    console.log('------------------')
 
     if (user == 'admin' && password == '123123') {
         const currentToken = jwtToken.sign({ user }, KEY_TOKEN, { expiresIn: "2h" })
@@ -69,7 +78,6 @@ app.post('/login/', (req, resp) => {
 })
 
 app.post('/login/logout', (req, res) => {
-    // jwtToken.destroy()
     res.json('try logout')
 })
 
